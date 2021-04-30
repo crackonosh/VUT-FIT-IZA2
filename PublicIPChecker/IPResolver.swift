@@ -7,11 +7,13 @@
 
 import Foundation
 
+/// Enumeration containing errors that could be thrown inside IPResolvers functions
 enum IPResolverErrors: Error {
   case UnexpectedRunningTaskError
 }
 
-
+/// Gets public IP address of current device
+/// - Returns: Tuple of integer representing return code of function and string representing resolved IP address or occured error message
 func getPublicIPAddress() -> (Int, String) {
   // see https://www.makeuseof.com/get-public-ip-address-in-linux/
   let cmd = "host myip.opendns.com resolver1.opendns.com | grep \"myip.opendns.com has\" | awk '{print $4}'"
@@ -25,6 +27,7 @@ func getPublicIPAddress() -> (Int, String) {
     return (99, "Unexpected error occured when running task.")
   }
   
+  // handle occured errors
   if stderr!.contains("connection") {
     return (1, "Unable to resolve IP address, possibly not connected to internet.")
   } else if stderr!.contains("stderrPipe") || stderr!.contains("stdoutPipe") {
@@ -33,11 +36,11 @@ func getPublicIPAddress() -> (Int, String) {
     return (99, "Unexpected error occured during exectuion of command")
   }
   
-  // handle given IP address
-  print (stdout!)
   return (0, stdout!)
 }
 
+/// Executes given `command` in `sh` environment
+/// - Returns: Tuple where first string represents `stdout` of command and the second `stderr` of command
 func shell(_ command: String) throws -> (String, String){
   // see https://www.hackingwithswift.com/example-code/system/how-to-run-an-external-program-using-process
   
@@ -69,7 +72,6 @@ func shell(_ command: String) throws -> (String, String){
 
   // handle occuring errors from command
   if (err.contains("host: couldn't get address for")) {
-    print(err)
     return ("No connection", "")
   } else if (!err.isEmpty) {
     return (err, "")
@@ -83,13 +85,4 @@ func shell(_ command: String) throws -> (String, String){
 
   // trim newline character that is part of returned string
   return ("", output.trimmingCharacters(in: .whitespacesAndNewlines))
-}
-
-
-func resolveIP() -> (Int, String){
-  let (returnCode, address) = getPublicIPAddress()
-  if (returnCode != 0){
-    return (1, address)
-  }
-  return (0, address)
 }
