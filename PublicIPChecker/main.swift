@@ -82,10 +82,15 @@ func main() -> Result<Void, RunError> {
   
   
   
-  
-  
   print("Return code is: " + String(returnCode))
   print("IP address is: " + output)
+  
+  let (needsAction, message) = checkNewIPAddress(output)
+  
+  if !needsAction {
+    return .success(())
+  }
+  print(message)
   
   return .success(())
 }
