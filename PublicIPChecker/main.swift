@@ -7,6 +7,8 @@
 
 import Foundation
 
+var stderr = STDERRStream()
+
 /// Checks that given email addresses are in valid format
 /// - Parameter addresses: Array of email addresses
 /// - Returns: True if all addresses were valid, otherwise false
@@ -67,9 +69,23 @@ func main() -> Result<Void, RunError> {
     return .failure(.InvalidEmail)
   }
   
-  let (returnCode, IPaddress) = resolveIP()
+  // get public IP address and handle return codes of function
+  let (returnCode, output) = getPublicIPAddress()
+  if (returnCode != 0) {
+    print("Following error occured when resolving IP address:", to: &stderr)
+    print("\t " + output, to: &stderr)
+    if (returnCode == 99) {
+      return .failure(.Internal)
+    }
+    return .failure(.ResolverError)
+  }
+  
+  
+  
+  
+  
   print("Return code is: " + String(returnCode))
-  print("IP address is: " + IPaddress)
+  print("IP address is: " + output)
   
   return .success(())
 }
@@ -81,7 +97,7 @@ switch result {
   case.success:
     break
   case.failure(let error):
-    var stderr = STDERRStream()
+    stderr = STDERRStream()
     print("Error: " + error.description, to: &stderr)
     exit(Int32(error.code))
 }

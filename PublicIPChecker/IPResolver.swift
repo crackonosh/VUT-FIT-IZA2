@@ -40,6 +40,7 @@ func getPublicIPAddress() -> (Int, String) {
 }
 
 /// Executes given `command` in `sh` environment
+/// - Parameter command: Shell command we want to execute
 /// - Returns: Tuple where first string represents `stdout` of command and the second `stderr` of command
 func shell(_ command: String) throws -> (String, String){
   // see https://www.hackingwithswift.com/example-code/system/how-to-run-an-external-program-using-process
