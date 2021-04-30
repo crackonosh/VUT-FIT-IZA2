@@ -13,6 +13,7 @@ enum RunError: Error {
   case InvalidEmail
   case ResolverError
   case Internal
+  case FileWriteError
 }
 
 //
@@ -24,6 +25,8 @@ extension RunError {
       case .NonExistingFile:
         return 2
       case .FileOpenError:
+        fallthrough
+      case .FileWriteError:
         return 3
       case .EmptyFile:
         return 4
@@ -46,6 +49,8 @@ extension RunError: CustomStringConvertible {
       return "Non existing file passed from command line!"
     case .FileOpenError:
       return "Unable to open file and get it's content!"
+    case .FileWriteError:
+      return "Unable to write to file!"
     case .EmptyFile:
       return "Passed file is empty!"
     case .InvalidEmail:
