@@ -52,6 +52,7 @@ func shell(_ command: String) throws -> (String, String){
     task.executableURL = URL(fileURLWithPath: "/usr/bin/env")
   } else {
     // Fallback on earlier versions
+    task.launchPath = "/usr/bin/env"
   }
   
   // run in `sh` with `-c` flag that runs following `command`
@@ -69,6 +70,8 @@ func shell(_ command: String) throws -> (String, String){
       try task.run()
     } else {
       // Fallback on earlier versions
+      task.launch()
+      task.waitUntilExit()
     }
   } catch {
     throw IPResolverErrors.UnexpectedRunningTaskError

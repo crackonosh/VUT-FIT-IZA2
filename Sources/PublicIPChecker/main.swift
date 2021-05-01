@@ -86,6 +86,7 @@ func main() -> Result<Void, RunError> {
   print("IP address is: " + output)
   
   let (needsAction, message) = checkNewIPAddress(output)
+  sendEmail(old: output, new: message)
   
   // if addresses are identical, exit with success
   if !needsAction {
